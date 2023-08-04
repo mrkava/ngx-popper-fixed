@@ -21,11 +21,10 @@ import {Placements, PopperContentOptions, Triggers} from './popper-model'
     <div #popperViewRef
          [class.ngxp__container]="!popperOptions.disableDefaultStyling"
          [class.ngxp__animation]="!popperOptions.disableAnimation"
-         [style.display]="displayType"
-         [style.opacity]="opacity"
+         [class.ngxp__hide]="!state"
          [ngStyle]="popperOptions.styles"
          [ngClass]="extractAppliedClassListExpr(popperOptions.applyClass)"
-         attr.aria-hidden="{{ariaHidden}}"
+         attr.aria-hidden="{{!state}}"
          [attr.aria-describedby]="popperOptions.ariaDescribe || null"
          attr.role="{{popperOptions.ariaRole}}">
       <div class="ngxp__inner" *ngIf="text" [innerHTML]="text">
@@ -74,7 +73,7 @@ export class PopperContent implements OnDestroy {
 
   onUpdate: Function;
 
-  state: boolean = true;
+  state: boolean = false;
 
   private globalResize: any;
 
@@ -163,6 +162,7 @@ export class PopperContent implements OnDestroy {
     this.determineArrowColor();
     popperOptions.modifiers = Object.assign(popperOptions.modifiers, this.popperOptions.popperModifiers);
 
+    this.toggleVisibility(true);
     this.popperInstance = new Popper(
       this.referenceObject,
       this.popperViewRef.nativeElement,
@@ -171,7 +171,7 @@ export class PopperContent implements OnDestroy {
 
     (this.popperInstance as any).enableEventListeners();
     this.scheduleUpdate();
-    this.toggleVisibility(true);
+    
     this.globalResize = this.renderer.listen('document', 'resize', this.onDocumentResize.bind(this))
   }
 
@@ -206,18 +206,7 @@ export class PopperContent implements OnDestroy {
   }
 
   toggleVisibility(state: boolean) {
-    if (!state) {
-      this.opacity = 0;
-      this.displayType = "none";
-      this.ariaHidden = 'true';
-      this.state = false;
-    }
-    else {
-      this.opacity = 1;
-      this.displayType = "block";
-      this.ariaHidden = 'false';
-      this.state = true;
-    }
+    this.state = state;
     if (!this.CDR['destroyed']) {
       this.CDR.detectChanges();
     }

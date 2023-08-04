@@ -1,10 +1,17 @@
 .ngxp__container {
-  display: none;
+  display: block;
   position: absolute;
   border-radius: 3px;
   border: 1px solid grey;
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
   padding: 10px;
+
+  &.ngxp__hide {
+    height: 0;
+    width: 0;
+    overflow: hidden;
+    padding: 0;
+  }
 }
 
 .ngxp__container.ngxp__animation {
